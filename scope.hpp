@@ -15,8 +15,8 @@ public:
         install();
     }
     ~scope_guard() {
-    	cleanup(f_);
-	}
+        cleanup(f_);
+    }
 };
 
 //////////////////////////////////////////////
@@ -24,15 +24,15 @@ public:
 //////////////////////////////////////////////
 
 struct unchecked_install_policy {
-	void install() { }
+    void install() { }
 };
 
 struct checked_install_policy {
-	void install() {
-		if (std::uncaught_exception()) {
-			std::terminate(); // sorry
-		}
-	}
+    void install() {
+        if (std::uncaught_exception()) {
+            std::terminate(); // sorry
+        }
+    }
 };
 
 //////////////////////////////////////////////
@@ -40,18 +40,18 @@ struct checked_install_policy {
 //////////////////////////////////////////////
 
 struct exit_policy {
-	typedef unchecked_install_policy installer;
-	
-    template<typename F>
+    typedef unchecked_install_policy installer;
+    
+    template < typename F >
     void cleanup(F& f) {
         f();
     }
 };
 
 struct failure_policy {
-	typedef checked_install_policy installer;
-	
-    template<typename F>
+    typedef checked_install_policy installer;
+    
+    template < typename F >
     void cleanup(F& f) {
         // Only cleanup if we're exiting from an exception.
         if (std::uncaught_exception()) {
@@ -61,9 +61,9 @@ struct failure_policy {
 };
 
 struct success_policy {
-	typedef checked_install_policy installer;
-	
-    template<typename F>
+    typedef checked_install_policy installer;
+    
+    template < typename F >
     void cleanup(F& f) {
         // Only cleanup if we're NOT exiting from an exception.
         if (!std::uncaught_exception()) {
@@ -76,17 +76,17 @@ struct success_policy {
 // Syntactical sugar
 //////////////////////////////////////////////
 
-template<typename CleanupPolicy>
+template < typename CleanupPolicy >
 struct scope_guard_builder { };
 
-template<typename F, typename CleanupPolicy>
+template < typename F, typename CleanupPolicy >
 scope_guard<F,CleanupPolicy> 
 operator+(
-	scope_guard_builder<CleanupPolicy> builder,
-	F&& f
-	)
+    scope_guard_builder<CleanupPolicy> builder,
+    F&& f
+    )
 {
-	return std::forward<F>(f);
+    return std::forward<F>(f);
 }
 
 // typical preprocessor utility stuff.
